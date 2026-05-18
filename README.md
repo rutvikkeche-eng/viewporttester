@@ -16,3 +16,5 @@ unavailable items are removed after shuffle generation
 the carousel reconstructs itself while compacting gaps and preserving structural continuity
 
 The logic also ensures that empty slots can only accumulate toward the bottom-right side of the layout, helping maintain a visually stable carousel structure.
+
+Demo - https://rutvikkeche-eng.github.io/viewporttester/
