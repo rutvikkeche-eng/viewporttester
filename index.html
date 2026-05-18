@@ -3,29 +3,29 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>NPC Viewport Visibility Tester</title>
+
+<title>NPC Visibility Recovery Tester</title>
 
 <style>
-@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Syne:wght@400;600;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Syne:wght@500;700;800&display=swap');
 
 :root{
-  --bg:#f5f5f3;
+  --bg:#f6f6f4;
   --surface:#ffffff;
-  --surface2:#f0f0ee;
-  --border:#e0e0dc;
-  --border-strong:#c8c8c4;
-  --text:#111110;
-  --muted:#888884;
-  --muted2:#aaaaaa;
+  --surface2:#f0f0ed;
+
+  --text:#111;
+  --muted:#888;
+  --muted2:#aaa;
+
+  --border:#d8d8d4;
+  --border2:#bdbdb8;
 
   --green:#00a86b;
-  --green-bg:#e8f7f1;
+  --greenBg:#e8f7f1;
 
-  --red:#d93025;
-  --red-bg:#fdecea;
-
-  --blue:#1a6ef5;
-  --blue-bg:#e8f0fe;
+  --blue:#246bff;
+  --blueBg:#ebf1ff;
 }
 
 *{
@@ -36,51 +36,33 @@
 
 body{
   background:var(--bg);
-  color:var(--text);
   font-family:'JetBrains Mono', monospace;
-  min-height:100vh;
-  padding:24px 28px;
-  font-size:13px;
+  color:var(--text);
+  padding:24px;
 }
 
 header{
-  border-bottom:2px solid var(--text);
-  padding-bottom:14px;
   margin-bottom:18px;
-
-  display:flex;
-  align-items:baseline;
-  gap:14px;
-  flex-wrap:wrap;
+  border-bottom:2px solid #111;
+  padding-bottom:12px;
 }
 
 header h1{
   font-family:'Syne', sans-serif;
+  font-size:1.35rem;
   font-weight:800;
-  font-size:1.3rem;
 }
 
 header p{
-  font-size:0.7rem;
-  color:var(--muted);
-}
-
-.algo-summary{
-  background:var(--surface);
-  border:1px solid var(--border-strong);
-  border-radius:6px;
-  padding:14px 16px;
-  margin-bottom:18px;
-  font-size:0.68rem;
-  line-height:1.7;
+  margin-top:4px;
+  font-size:.72rem;
   color:var(--muted);
 }
 
 .layout{
   display:grid;
-  grid-template-columns:296px 1fr;
+  grid-template-columns:300px 1fr;
   gap:18px;
-  align-items:start;
 }
 
 @media(max-width:900px){
@@ -89,123 +71,92 @@ header p{
   }
 }
 
-.config-panel{
+.panel{
   background:var(--surface);
-  border:1px solid var(--border-strong);
-  border-radius:6px;
-  padding:18px;
-  position:sticky;
-  top:18px;
+  border:1px solid var(--border2);
+  border-radius:8px;
+  overflow:hidden;
 }
 
-.sec-title{
-  font-family:'Syne', sans-serif;
-  font-size:0.65rem;
-  font-weight:600;
-  letter-spacing:2px;
-  text-transform:uppercase;
-  color:var(--muted);
+.panelBody{
+  padding:18px;
+}
 
-  margin-bottom:14px;
-  padding-bottom:7px;
-  border-bottom:1px solid var(--border);
+.sectionTitle{
+  font-family:'Syne', sans-serif;
+  font-size:.7rem;
+  text-transform:uppercase;
+  letter-spacing:2px;
+  color:var(--muted);
+  margin-bottom:12px;
 }
 
 label{
   display:block;
-  font-size:0.66rem;
+  margin-top:12px;
+  margin-bottom:5px;
+  font-size:.68rem;
   color:var(--muted);
-  margin-bottom:4px;
-  margin-top:11px;
 }
 
-input[type=number],
-input[type=text]{
+input{
   width:100%;
-  background:var(--bg);
-  border:1px solid var(--border-strong);
-  border-radius:4px;
-  color:var(--text);
+  padding:9px 10px;
+  border:1px solid var(--border2);
+  border-radius:5px;
+  background:#fafafa;
   font-family:'JetBrains Mono', monospace;
-  font-size:0.78rem;
-  padding:7px 9px;
 }
 
-.btn{
+button{
   width:100%;
-  padding:9px;
+  margin-top:12px;
   border:none;
-  border-radius:4px;
+  border-radius:5px;
+  padding:11px;
+  cursor:pointer;
   font-family:'Syne', sans-serif;
   font-weight:700;
-  font-size:0.8rem;
-  cursor:pointer;
-  margin-top:11px;
 }
 
-.btn-primary{
-  background:var(--text);
-  color:#fff;
+.btnPrimary{
+  background:#111;
+  color:white;
 }
 
-.btn-outline{
-  background:var(--surface2);
-  border:1px solid var(--border-strong);
+.btnSecondary{
+  background:#efefec;
+  border:1px solid var(--border2);
 }
 
-.right-col{
+.mainCol{
   display:flex;
   flex-direction:column;
-  gap:14px;
+  gap:18px;
 }
 
-.stats-row{
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:10px;
-}
-
-.stat-box{
+.phase{
   background:var(--surface);
-  border:1px solid var(--border-strong);
-  border-radius:6px;
-  padding:11px 14px;
-}
-
-.stat-val{
-  font-family:'Syne', sans-serif;
-  font-size:1.45rem;
-  font-weight:800;
-}
-
-.stat-lbl{
-  font-size:0.6rem;
-  color:var(--muted);
-  text-transform:uppercase;
-  letter-spacing:1.2px;
-}
-
-.phase-card{
-  background:var(--surface);
-  border:1px solid var(--border-strong);
-  border-radius:6px;
+  border:1px solid var(--border2);
+  border-radius:8px;
   overflow:hidden;
 }
 
-.phase-head{
+.phaseHead{
+  padding:14px 18px;
+  border-bottom:1px solid var(--border);
+  background:#f7f7f5;
+
   display:flex;
   align-items:center;
   gap:10px;
-  padding:10px 14px;
-  border-bottom:1px solid var(--border);
-  background:var(--surface2);
 }
 
-.phase-num{
-  width:19px;
-  height:19px;
+.phaseNum{
+  width:22px;
+  height:22px;
   border-radius:50%;
-  background:var(--text);
+  background:#111;
   color:#fff;
 
   display:flex;
@@ -213,240 +164,114 @@ input[type=text]{
   justify-content:center;
 
   font-family:'Syne', sans-serif;
-  font-size:0.68rem;
+  font-size:.72rem;
   font-weight:800;
 }
 
-.phase-title{
+.phaseTitle{
   font-family:'Syne', sans-serif;
-  font-size:0.78rem;
+  font-size:1rem;
   font-weight:700;
 }
 
-.phase-sub{
-  margin-left:auto;
-  font-size:0.63rem;
+.phaseBody{
+  padding:20px;
+}
+
+.rowLabel{
+  margin-bottom:8px;
+  font-size:.7rem;
+  letter-spacing:3px;
   color:var(--muted);
 }
 
-.phase-body{
-  padding:14px;
-}
-
-.row-lbl{
-  font-size:0.61rem;
-  color:var(--muted);
-  text-transform:uppercase;
-  letter-spacing:1.5px;
-  margin-bottom:7px;
-}
-
-.row-wrap{
+.row{
   display:flex;
   align-items:center;
-  gap:5px;
   flex-wrap:wrap;
-  margin-bottom:12px;
+  gap:8px;
+  margin-bottom:20px;
 }
 
 .chip{
+  width:72px;
+  height:62px;
+  border-radius:7px;
+
   display:flex;
   align-items:center;
   justify-content:center;
 
-  width:50px;
-  height:42px;
+  position:relative;
 
-  border-radius:5px;
-  font-size:0.72rem;
+  font-size:1rem;
   font-weight:700;
-
-  border:1.5px solid transparent;
 }
 
-.chip.in-vp{
-  background:#e8f7f1;
-  border-color:#00a86b;
-  color:#00a86b;
+.visibleTop{
+  border:2px solid var(--green);
+  background:var(--greenBg);
+  color:var(--green);
 }
 
-.chip.out-vp{
-  background:#f0f0ee;
-  border-color:#c8c8c4;
+.visibleBottom{
+  border:2px solid var(--blue);
+  background:var(--blueBg);
+  color:var(--blue);
+}
+
+.hiddenTop{
+  border:2px solid #bdbdb8;
+  background:#f3f3f0;
   color:#888;
 }
 
-.vp-divider{
-  width:2px;
-  height:42px;
-  background:#111;
-  opacity:0.2;
+.hiddenBottom{
+  border:2px solid #ccd5ef;
+  background:#eef2ff;
+  color:#7f8dbd;
 }
 
-.il-wrap{
-  display:flex;
-  align-items:center;
-  gap:5px;
-  flex-wrap:wrap;
-  padding-bottom:20px;
-}
-
-.il-chip{
-  display:flex;
-  align-items:center;
-  justify-content:center;
-
-  width:50px;
-  height:42px;
-
-  border-radius:5px;
-  border:1.5px solid transparent;
-
-  position:relative;
-  cursor:pointer;
-  font-size:0.72rem;
-  font-weight:700;
-}
-
-.il-chip.top-vp{
-  background:#e8f7f1;
-  border-color:#00a86b;
-  color:#00a86b;
-}
-
-.il-chip.bot-vp{
-  background:#e8f0fe;
-  border-color:#1a6ef5;
-  color:#1a6ef5;
-}
-
-.il-chip.top-out{
-  background:#f5f5f0;
-  border-color:#c8c8c4;
-  color:#666;
-}
-
-.il-chip.bot-out{
-  background:#edf0ff;
-  border-color:#c0ccf0;
-  color:#6070b8;
-}
-
-.il-chip.il-dropped{
-  opacity:0.25;
+.dropped{
+  opacity:.2;
   text-decoration:line-through;
 }
 
-.row-tag{
+.tag{
   position:absolute;
   bottom:-16px;
-  left:50%;
-  transform:translateX(-50%);
-
-  font-size:0.45rem;
-  font-weight:700;
+  font-size:.55rem;
   color:#aaa;
 }
 
-.il-sep{
-  font-family:'Syne', sans-serif;
-  font-weight:800;
-  font-size:1rem;
-  color:#aaa;
-  line-height:42px;
+.sep{
+  width:3px;
+  height:52px;
+  background:#999;
+  opacity:.35;
 }
 
 .connector{
-  display:flex;
-  align-items:center;
-  gap:8px;
-  font-size:0.68rem;
+  text-align:center;
   color:#aaa;
+  font-size:.75rem;
 }
 
-.connector::before,
-.connector::after{
-  content:'';
-  flex:1;
-  height:1px;
-  background:#ddd;
+.applyBtn{
+  width:auto;
+  padding:12px 18px;
 }
 
-.apply-btn{
-  display:inline-flex;
-  align-items:center;
-  gap:5px;
-
-  padding:6px 13px;
-
-  background:#111;
-  color:#fff;
-
-  border:none;
-  border-radius:4px;
-
-  font-family:'Syne', sans-serif;
-  font-weight:700;
-  font-size:0.72rem;
-
-  cursor:pointer;
-  margin-top:10px;
+.log{
+  max-height:220px;
+  overflow:auto;
 }
 
-.log-panel{
-  background:#fff;
-  border:1px solid #c8c8c4;
-  border-radius:6px;
-  max-height:190px;
-  overflow-y:auto;
-}
-
-.log-hd{
-  font-family:'Syne', sans-serif;
-  font-size:0.65rem;
-  font-weight:600;
-  letter-spacing:2px;
-  text-transform:uppercase;
-  color:#888;
-
-  padding:9px 13px;
-  border-bottom:1px solid #e0e0dc;
-}
-
-.log-entry{
-  font-size:0.67rem;
-  padding:5px 13px;
-  border-bottom:1px solid #eee;
-  color:#777;
-}
-
-.tag{
-  display:inline-block;
-  padding:1px 5px;
-  border-radius:3px;
-  font-size:0.55rem;
-  font-weight:700;
-  margin-right:5px;
-}
-
-.tag-shuffle{
-  background:#e8f7f1;
-  color:#00a86b;
-}
-
-.tag-recover{
-  background:#e8f0fe;
-  color:#1a6ef5;
-}
-
-.tag-info{
-  background:#f0f0ee;
-  color:#777;
-}
-
-.empty-msg{
-  color:#aaa;
-  font-size:0.7rem;
+.logEntry{
+  padding:8px 18px;
+  border-top:1px solid #eee;
+  font-size:.72rem;
+  color:#666;
 }
 </style>
 </head>
@@ -454,163 +279,165 @@ input[type=text]{
 <body>
 
 <header>
-  <h1>NPC · Viewport Visibility</h1>
-  <p>Shuffle → Interleave → Drop → Recover</p>
+  <h1>NPC · Recovery Logic Simulator</h1>
+  <p>
+    Row affinity → global fallback pairing → bottom-right empty enforcement
+  </p>
 </header>
-
-<div class="algo-summary">
-<b>NEW RECOVERY LOGIC</b><br><br>
-
-1. Top + Bottom rows shuffled independently.<br>
-2. Interleaved into proximity stream.<br>
-3. Drops simulate invalid candidates.<br>
-4. Reconstruction preserves row affinity as long as possible.<br>
-5. BOTH original top and original bottom candidates receive fair recovery priority.<br>
-6. If top slot becomes empty while a bottom candidate exists nearby, bottom candidate is flipped upward.<br>
-7. Final invariant: empty slots may ONLY exist at bottom-right.
-</div>
 
 <div class="layout">
 
-<div class="config-panel">
+  <!-- LEFT -->
+  <div class="panel">
+    <div class="panelBody">
 
-<div class="sec-title">Configuration</div>
+      <div class="sectionTitle">Controls</div>
 
-<label>Viewport Columns</label>
-<input type="number" id="viewportCols" value="4">
+      <label>Viewport Columns</label>
+      <input id="viewportCols" value="4" />
 
-<label>Top Row Items</label>
-<input type="text" id="topItems" value="A,B,C,D,E,F,G">
+      <label>Top Row</label>
+      <input id="topInput" value="A,B,C,D,E,F,G" />
 
-<label>Bottom Row Items</label>
-<input type="text" id="bottomItems" value="P,Q,R,S,T,U,V">
+      <label>Bottom Row</label>
+      <input id="bottomInput" value="P,Q,R,S,T,U,V" />
 
-<button class="btn btn-primary" onclick="initAndRender()">
-↺ Reset & Shuffle
-</button>
+      <button class="btnPrimary" onclick="init()">
+        Reset & Shuffle
+      </button>
 
-<button class="btn btn-outline" onclick="nextRender()">
-→ Next Render
-</button>
+      <button class="btnSecondary" onclick="nextRender()">
+        Next Shuffle
+      </button>
 
-</div>
+    </div>
+  </div>
 
-<div class="right-col">
+  <!-- RIGHT -->
+  <div class="mainCol">
 
-<div class="stats-row">
+    <!-- PHASE 1 -->
+    <div class="phase">
 
-<div class="stat-box">
-<div class="stat-val" id="statRender">—</div>
-<div class="stat-lbl">Render #</div>
-</div>
+      <div class="phaseHead">
+        <div class="phaseNum">1</div>
+        <div class="phaseTitle">Shuffled State</div>
+      </div>
 
-<div class="stat-box">
-<div class="stat-val" id="statVisible">—</div>
-<div class="stat-lbl">Visible</div>
-</div>
+      <div class="phaseBody">
 
-<div class="stat-box">
-<div class="stat-val" id="statDropped">0</div>
-<div class="stat-lbl">Dropped</div>
-</div>
+        <div class="rowLabel">TOP ROW</div>
+        <div class="row" id="topShuffle"></div>
 
-</div>
+        <div class="rowLabel">BOTTOM ROW</div>
+        <div class="row" id="bottomShuffle"></div>
 
-<div class="phase-card">
+      </div>
+    </div>
 
-<div class="phase-head">
-<div class="phase-num">1</div>
-<div class="phase-title">Shuffled State</div>
-</div>
+    <div class="connector">
+      ↓ interleave into proximity ordering
+    </div>
 
-<div class="phase-body">
+    <!-- PHASE 2 -->
+    <div class="phase">
 
-<div class="row-lbl">Top Row</div>
-<div class="row-wrap" id="shuffledTop"></div>
+      <div class="phaseHead">
+        <div class="phaseNum">2</div>
+        <div class="phaseTitle">Interleaved Ordering</div>
+      </div>
 
-<div class="row-lbl">Bottom Row</div>
-<div class="row-wrap" id="shuffledBottom"></div>
+      <div class="phaseBody">
 
-</div>
-</div>
+        <div class="row" id="interleaved"></div>
 
-<div class="connector">
-↓ interleave into proximity ordering
-</div>
+        <button
+          class="btnPrimary applyBtn"
+          onclick="recover()"
+        >
+          Apply Drops → Recover
+        </button>
 
-<div class="phase-card">
+      </div>
+    </div>
 
-<div class="phase-head">
-<div class="phase-num">2</div>
-<div class="phase-title">Interleaved Ordering</div>
-</div>
+    <div class="connector">
+      ↓ reconstruct rows
+    </div>
 
-<div class="phase-body">
+    <!-- PHASE 3 -->
+    <div class="phase">
 
-<div class="il-wrap" id="interleavedDisplay"></div>
+      <div class="phaseHead">
+        <div class="phaseNum">3</div>
+        <div class="phaseTitle">Recovered Carousel State</div>
+      </div>
 
-<button class="apply-btn" onclick="applyDropsAndRecover()">
-Apply drops → Recover
-</button>
+      <div class="phaseBody">
 
-</div>
-</div>
+        <div class="rowLabel">TOP ROW</div>
+        <div class="row" id="finalTop"></div>
 
-<div class="connector">
-↓ reconstruct rows
-</div>
+        <div class="rowLabel">BOTTOM ROW</div>
+        <div class="row" id="finalBottom"></div>
 
-<div class="phase-card">
+      </div>
+    </div>
 
-<div class="phase-head">
-<div class="phase-num">3</div>
-<div class="phase-title">Recovered Carousel State</div>
-</div>
+    <!-- LOG -->
+    <div class="phase">
 
-<div class="phase-body" id="phase3Body">
-<div class="empty-msg">
-Apply drops to run reconstruction.
-</div>
-</div>
+      <div class="phaseHead">
+        <div class="phaseNum">•</div>
+        <div class="phaseTitle">Event Log</div>
+      </div>
 
-</div>
+      <div class="log" id="log"></div>
 
-<div class="log-panel">
+    </div>
 
-<div class="log-hd">
-Event Log
-</div>
-
-<div id="logBody"></div>
-
-</div>
-
-</div>
+  </div>
 </div>
 
 <script>
 
+/* =========================================================
+   STATE
+========================================================= */
+
 const S = {
-  topRow: [],
-  bottomRow: [],
-  viewportCols: 4,
-  renderCount: 0
+  viewport:4,
+  top:[],
+  bottom:[]
 };
 
 let shuffledTop = [];
 let shuffledBottom = [];
-let interleavedList = [];
 
-let droppedSet = new Set();
+let interleaved = [];
 
-let recoveredTop = [];
-let recoveredBottom = [];
+let dropped = new Set();
 
-let recoveryApplied = false;
+/* =========================================================
+   HELPERS
+========================================================= */
 
-function parseItems(str){
-  return str.split(',')
-    .map(s => s.trim())
+function log(msg){
+
+  const el = document.createElement('div');
+
+  el.className = 'logEntry';
+
+  el.textContent = msg;
+
+  document.getElementById('log').prepend(el);
+}
+
+function parse(str){
+
+  return str
+    .split(',')
+    .map(x => x.trim())
     .filter(Boolean);
 }
 
@@ -628,401 +455,367 @@ function shuffle(arr){
   return a;
 }
 
-function log(tag,msg){
+/* =========================================================
+   INTERLEAVE
+========================================================= */
 
-  const el = document.getElementById('logBody');
+function buildInterleave(top,bottom){
 
-  const d = document.createElement('div');
+  const res = [];
 
-  d.className = 'log-entry';
+  const max = Math.max(top.length,bottom.length);
 
-  d.innerHTML = `
-    <span class="tag tag-${tag}">
-      ${tag}
-    </span>
-    ${msg}
-  `;
+  for(let i=0;i<max;i++){
 
-  el.prepend(d);
-}
-
-function renderCarouselRow(arr,container){
-
-  container.innerHTML = '';
-
-  arr.forEach((item,idx)=>{
-
-    const inVP = idx < S.viewportCols;
-
-    const chip = document.createElement('div');
-
-    chip.className =
-      `chip ${inVP ? 'in-vp' : 'out-vp'}`;
-
-    chip.textContent = item;
-
-    container.appendChild(chip);
-
-    if(
-      idx === S.viewportCols-1 &&
-      idx < arr.length-1
-    ){
-      const divider = document.createElement('div');
-
-      divider.className = 'vp-divider';
-
-      container.appendChild(divider);
-    }
-  });
-}
-
-function buildInterleaved(top,bot){
-
-  const out = [];
-
-  const n = Math.max(top.length,bot.length);
-
-  for(let i=0;i<n;i++){
-
-    if(i < top.length){
-      out.push({
-        item: top[i],
-        row: 'top'
+    if(top[i]){
+      res.push({
+        item:top[i],
+        row:'top'
       });
     }
 
-    if(i < bot.length){
-      out.push({
-        item: bot[i],
-        row: 'bottom'
+    if(bottom[i]){
+      res.push({
+        item:bottom[i],
+        row:'bottom'
       });
     }
   }
 
-  return out;
+  return res;
 }
 
 /* =========================================================
-   NEW FAIR RECOVERY
+   GLOBAL PAIRING LOGIC
 ========================================================= */
 
-function reconstructRows(filtered){
+function reconstruct(filtered){
 
-  const top = [];
-  const bot = [];
+  /*
+    IMPORTANT FIX:
 
-  const topQueue =
-    filtered
-      .filter(x => x.row === 'top')
-      .map(x => x.item);
+    Earlier logic greedily assigned
+    lone survivors too early.
 
-  const botQueue =
-    filtered
-      .filter(x => x.row === 'bottom')
-      .map(x => x.item);
+    Example:
+    top: E
+    bottom: U,Q,R
 
-  /* =====================================================
-     FAIR PAIRING
+    old:
+      E+U
+      Q forced top
+      R forced top
 
-     preserve top-top
-     preserve bottom-bottom
-  ===================================================== */
+    new:
+      E+U
+      Q+R pair globally
 
-  while(topQueue.length || botQueue.length){
+    We now:
+    1. Preserve row affinity initially
+    2. Then globally pair leftovers
+  */
 
-    const topCandidate =
-      topQueue.shift();
+  const topRes = [];
+  const bottomRes = [];
 
-    const botCandidate =
-      botQueue.shift();
+  let topQueue = [];
+  let bottomQueue = [];
 
-    if(topCandidate){
-      top.push(topCandidate);
+  /* =========================================
+     PASS 1
+     preserve affinity
+  ========================================= */
+
+  filtered.forEach(e => {
+
+    if(e.row === 'top'){
+      topQueue.push(e.item);
+    } else {
+      bottomQueue.push(e.item);
+    }
+  });
+
+  /* =========================================
+     PHASE A
+     pair original affinity first
+  ========================================= */
+
+  while(topQueue.length && bottomQueue.length){
+
+    topRes.push(topQueue.shift());
+    bottomRes.push(bottomQueue.shift());
+  }
+
+  /* =========================================
+     PHASE B
+     GLOBAL FALLBACK PAIRING
+
+     leftover items pair together
+     regardless of origin row
+  ========================================= */
+
+  const leftovers = [
+    ...topQueue,
+    ...bottomQueue
+  ];
+
+  while(leftovers.length){
+
+    const a = leftovers.shift();
+
+    if(a){
+      topRes.push(a);
     }
 
-    if(botCandidate){
-      bot.push(botCandidate);
+    const b = leftovers.shift();
+
+    if(b){
+      bottomRes.push(b);
     }
   }
 
-  /* =====================================================
-     STRICT EMPTY RULE
+  /* =========================================
+     FINAL STRICT COMPACTION
 
-     EMPTYS ONLY ALLOWED AT BOTTOM RIGHT
+     ONLY bottom-right empties allowed
 
      if:
-     top[i] missing
-     bottom[i] exists
+       top empty
+       bottom exists
 
-     FLIP upward
-  ===================================================== */
+     move upward
+  ========================================= */
 
-  const maxLen =
-    Math.max(top.length, bot.length);
+  const max = Math.max(
+    topRes.length,
+    bottomRes.length
+  );
 
-  for(let i=0;i<maxLen;i++){
+  for(let i=0;i<max;i++){
 
-    const topEmpty = !top[i];
-    const botFilled = !!bot[i];
-
-    if(topEmpty && botFilled){
-
-      top[i] = bot[i];
-      bot[i] = null;
+    if(
+      !topRes[i] &&
+      bottomRes[i]
+    ){
+      topRes[i] = bottomRes[i];
+      bottomRes[i] = undefined;
     }
   }
 
   return {
-    top: top.filter(Boolean),
-    bot: bot.filter(Boolean)
+    top: topRes.filter(Boolean),
+    bottom: bottomRes.filter(Boolean)
   };
 }
 
-function renderPhase1(){
+/* =========================================================
+   RENDER
+========================================================= */
 
-  renderCarouselRow(
-    shuffledTop,
-    document.getElementById('shuffledTop')
-  );
+function makeChip(item,cls,rowName){
 
-  renderCarouselRow(
-    shuffledBottom,
-    document.getElementById('shuffledBottom')
-  );
+  const d = document.createElement('div');
+
+  d.className = `chip ${cls}`;
+
+  d.textContent = item;
+
+  const t = document.createElement('div');
+
+  t.className = 'tag';
+
+  t.textContent = rowName;
+
+  d.appendChild(t);
+
+  return d;
 }
 
-function renderInterleavedPhase(){
+function renderRow(arr,el,isTop){
+
+  el.innerHTML = '';
+
+  arr.forEach((x,i)=>{
+
+    const visible =
+      i < S.viewport;
+
+    const cls =
+      visible
+        ? (isTop ? 'visibleTop' : 'visibleBottom')
+        : (isTop ? 'hiddenTop' : 'hiddenBottom');
+
+    el.appendChild(
+      makeChip(
+        x,
+        cls,
+        isTop ? 'TOP' : 'BTM'
+      )
+    );
+
+    if(
+      i === S.viewport-1 &&
+      i !== arr.length-1
+    ){
+      const sep = document.createElement('div');
+      sep.className = 'sep';
+      el.appendChild(sep);
+    }
+  });
+}
+
+function renderInterleave(){
 
   const wrap =
-    document.getElementById('interleavedDisplay');
+    document.getElementById('interleaved');
 
   wrap.innerHTML = '';
 
-  const vpLimit = S.viewportCols * 2;
+  interleaved.forEach((e,i)=>{
 
-  interleavedList.forEach((entry,idx)=>{
+    const inVp =
+      i < S.viewport * 2;
 
-    if(idx === vpLimit){
-
-      const sep = document.createElement('span');
-
-      sep.className = 'il-sep';
-
-      sep.textContent = '|';
-
-      wrap.appendChild(sep);
-    }
-
-    const inVP = idx < vpLimit;
-
-    const isTop = entry.row === 'top';
-
-    let cls = inVP
-      ? (isTop ? 'top-vp' : 'bot-vp')
-      : (isTop ? 'top-out' : 'bot-out');
-
-    const dropped =
-      droppedSet.has(entry.item);
+    const cls =
+      e.row === 'top'
+      ? (inVp ? 'visibleTop' : 'hiddenTop')
+      : (inVp ? 'visibleBottom' : 'hiddenBottom');
 
     const chip =
-      document.createElement('div');
+      makeChip(
+        e.item,
+        cls,
+        e.row === 'top'
+          ? 'TOP'
+          : 'BTM'
+      );
 
-    chip.className =
-      `il-chip ${cls}${dropped ? ' il-dropped' : ''}`;
-
-    chip.textContent = entry.item;
-
-    const tag =
-      document.createElement('span');
-
-    tag.className = 'row-tag';
-
-    tag.textContent =
-      isTop ? 'TOP' : 'BTM';
-
-    chip.appendChild(tag);
+    if(dropped.has(e.item)){
+      chip.classList.add('dropped');
+    }
 
     chip.onclick = ()=>{
 
-      if(droppedSet.has(entry.item)){
-        droppedSet.delete(entry.item);
+      if(dropped.has(e.item)){
+        dropped.delete(e.item);
       } else {
-        droppedSet.add(entry.item);
+        dropped.add(e.item);
       }
 
-      renderInterleavedPhase();
-
-      recoveryApplied = false;
-
-      document.getElementById('phase3Body').innerHTML =
-        `<div class="empty-msg">
-          Drops changed — apply again.
-        </div>`;
-
-      document.getElementById('statDropped')
-        .textContent = droppedSet.size;
+      renderInterleave();
     };
 
     wrap.appendChild(chip);
+
+    if(
+      i === (S.viewport*2)-1 &&
+      i !== interleaved.length-1
+    ){
+      const sep = document.createElement('div');
+      sep.className = 'sep';
+      wrap.appendChild(sep);
+    }
   });
-
-  document.getElementById('statDropped')
-    .textContent = droppedSet.size;
 }
 
-function renderPhase3(){
+/* =========================================================
+   ACTIONS
+========================================================= */
 
-  const body =
-    document.getElementById('phase3Body');
-
-  body.innerHTML = '';
-
-  if(!recoveryApplied){
-
-    body.innerHTML =
-      `<div class="empty-msg">
-        Apply drops to run reconstruction.
-      </div>`;
-
-    return;
-  }
-
-  function addRow(arr,label){
-
-    const lbl = document.createElement('div');
-
-    lbl.className = 'row-lbl';
-
-    lbl.textContent = label;
-
-    body.appendChild(lbl);
-
-    const wrap =
-      document.createElement('div');
-
-    wrap.className = 'row-wrap';
-
-    renderCarouselRow(arr,wrap);
-
-    body.appendChild(wrap);
-  }
-
-  addRow(recoveredTop,'Top Row');
-  addRow(recoveredBottom,'Bottom Row');
-
-  const visible =
-    recoveredTop.slice(0,S.viewportCols).length +
-    recoveredBottom.slice(0,S.viewportCols).length;
-
-  document.getElementById('statVisible')
-    .textContent = visible;
-}
-
-function applyDropsAndRecover(){
+function recover(){
 
   const filtered =
-    interleavedList.filter(
-      x => !droppedSet.has(x.item)
+    interleaved.filter(
+      x => !dropped.has(x.item)
     );
 
   const result =
-    reconstructRows(filtered);
+    reconstruct(filtered);
 
-  recoveredTop = result.top;
-  recoveredBottom = result.bot;
-
-  recoveryApplied = true;
-
-  log(
-    'recover',
-    `Top: [${recoveredTop.join(', ')}]
-     | Bottom: [${recoveredBottom.join(', ')}]`
+  renderRow(
+    result.top,
+    document.getElementById('finalTop'),
+    true
   );
 
-  renderPhase3();
+  renderRow(
+    result.bottom,
+    document.getElementById('finalBottom'),
+    false
+  );
+
+  log(
+    `Recovered → top:[${result.top.join(',')}]
+     bottom:[${result.bottom.join(',')}]`
+  );
 }
 
-function performRender(){
+function build(){
 
-  S.renderCount++;
+  shuffledTop = shuffle(S.top);
+  shuffledBottom = shuffle(S.bottom);
 
-  droppedSet = new Set();
-
-  recoveryApplied = false;
-
-  shuffledTop =
-    shuffle([...S.topRow]);
-
-  shuffledBottom =
-    shuffle([...S.bottomRow]);
-
-  interleavedList =
-    buildInterleaved(
+  interleaved =
+    buildInterleave(
       shuffledTop,
       shuffledBottom
     );
 
-  document.getElementById('statRender')
-    .textContent = S.renderCount;
+  renderRow(
+    shuffledTop,
+    document.getElementById('topShuffle'),
+    true
+  );
 
-  document.getElementById('statVisible')
-    .textContent = '—';
+  renderRow(
+    shuffledBottom,
+    document.getElementById('bottomShuffle'),
+    false
+  );
 
-  document.getElementById('statDropped')
-    .textContent = '0';
+  renderInterleave();
 
-  renderPhase1();
-
-  renderInterleavedPhase();
-
-  document.getElementById('phase3Body').innerHTML =
-    `<div class="empty-msg">
-      Apply drops to run reconstruction.
-    </div>`;
+  document.getElementById('finalTop').innerHTML = '';
+  document.getElementById('finalBottom').innerHTML = '';
 
   log(
-    'shuffle',
-    `Top: [${shuffledTop.join(', ')}]
-     | Bottom: [${shuffledBottom.join(', ')}]`
+    `Shuffle → top:[${shuffledTop.join(',')}]
+     bottom:[${shuffledBottom.join(',')}]`
   );
 }
 
-function initAndRender(){
+function init(){
 
-  S.viewportCols =
+  S.viewport =
     parseInt(
       document.getElementById('viewportCols').value
     ) || 4;
 
-  S.topRow =
-    parseItems(
-      document.getElementById('topItems').value
+  S.top =
+    parse(
+      document.getElementById('topInput').value
     );
 
-  S.bottomRow =
-    parseItems(
-      document.getElementById('bottomItems').value
+  S.bottom =
+    parse(
+      document.getElementById('bottomInput').value
     );
 
-  S.renderCount = 0;
+  dropped = new Set();
 
-  document.getElementById('logBody').innerHTML = '';
+  document.getElementById('log').innerHTML = '';
 
-  performRender();
+  build();
 }
 
 function nextRender(){
 
-  if(!S.topRow.length){
+  dropped = new Set();
 
-    initAndRender();
-    return;
-  }
-
-  performRender();
+  build();
 }
 
-initAndRender();
+init();
 
 </script>
 
