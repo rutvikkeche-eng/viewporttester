@@ -1,0 +1,1168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>NPC Viewport Visibility Tester</title>
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Syne:wght@400;600;800&display=swap');
+
+:root{
+  --bg:#f5f5f3;
+  --surface:#ffffff;
+  --surface2:#f0f0ee;
+  --border:#e0e0dc;
+  --border-strong:#c8c8c4;
+  --text:#111110;
+  --muted:#888884;
+  --muted2:#aaaaaa;
+
+  --green:#00a86b;
+  --green-bg:#e8f7f1;
+
+  --red:#d93025;
+  --red-bg:#fdecea;
+
+  --blue:#1a6ef5;
+  --blue-bg:#e8f0fe;
+
+  --orange:#e07000;
+}
+
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+}
+
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:'JetBrains Mono', monospace;
+  min-height:100vh;
+  padding:24px 28px;
+  font-size:13px;
+}
+
+header{
+  border-bottom:2px solid var(--text);
+  padding-bottom:14px;
+  margin-bottom:18px;
+
+  display:flex;
+  align-items:baseline;
+  gap:14px;
+  flex-wrap:wrap;
+}
+
+header h1{
+  font-family:'Syne', sans-serif;
+  font-weight:800;
+  font-size:1.3rem;
+}
+
+header p{
+  font-size:0.7rem;
+  color:var(--muted);
+}
+
+.algo-summary{
+  background:var(--surface);
+  border:1px solid var(--border-strong);
+  border-radius:6px;
+  padding:14px 16px;
+  margin-bottom:18px;
+  font-size:0.68rem;
+  line-height:1.7;
+  color:var(--muted);
+}
+
+.layout{
+  display:grid;
+  grid-template-columns:296px 1fr;
+  gap:18px;
+  align-items:start;
+}
+
+@media(max-width:900px){
+  .layout{
+    grid-template-columns:1fr;
+  }
+}
+
+.config-panel{
+  background:var(--surface);
+  border:1px solid var(--border-strong);
+  border-radius:6px;
+  padding:18px;
+  position:sticky;
+  top:18px;
+}
+
+.sec-title{
+  font-family:'Syne', sans-serif;
+  font-size:0.65rem;
+  font-weight:600;
+  letter-spacing:2px;
+  text-transform:uppercase;
+  color:var(--muted);
+
+  margin-bottom:14px;
+  padding-bottom:7px;
+  border-bottom:1px solid var(--border);
+}
+
+label{
+  display:block;
+  font-size:0.66rem;
+  color:var(--muted);
+  margin-bottom:4px;
+  margin-top:11px;
+}
+
+input[type=number],
+input[type=text]{
+  width:100%;
+  background:var(--bg);
+  border:1px solid var(--border-strong);
+  border-radius:4px;
+  color:var(--text);
+  font-family:'JetBrains Mono', monospace;
+  font-size:0.78rem;
+  padding:7px 9px;
+}
+
+.btn{
+  width:100%;
+  padding:9px;
+  border:none;
+  border-radius:4px;
+  font-family:'Syne', sans-serif;
+  font-weight:700;
+  font-size:0.8rem;
+  cursor:pointer;
+  margin-top:11px;
+}
+
+.btn-primary{
+  background:var(--text);
+  color:#fff;
+}
+
+.btn-outline{
+  background:var(--surface2);
+  border:1px solid var(--border-strong);
+}
+
+.right-col{
+  display:flex;
+  flex-direction:column;
+  gap:14px;
+}
+
+.stats-row{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:10px;
+}
+
+.stat-box{
+  background:var(--surface);
+  border:1px solid var(--border-strong);
+  border-radius:6px;
+  padding:11px 14px;
+}
+
+.stat-val{
+  font-family:'Syne', sans-serif;
+  font-size:1.45rem;
+  font-weight:800;
+}
+
+.stat-lbl{
+  font-size:0.6rem;
+  color:var(--muted);
+  text-transform:uppercase;
+  letter-spacing:1.2px;
+}
+
+.phase-card{
+  background:var(--surface);
+  border:1px solid var(--border-strong);
+  border-radius:6px;
+  overflow:hidden;
+}
+
+.phase-head{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:10px 14px;
+  border-bottom:1px solid var(--border);
+  background:var(--surface2);
+}
+
+.phase-num{
+  width:19px;
+  height:19px;
+  border-radius:50%;
+  background:var(--text);
+  color:#fff;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  font-family:'Syne', sans-serif;
+  font-size:0.68rem;
+  font-weight:800;
+}
+
+.phase-title{
+  font-family:'Syne', sans-serif;
+  font-size:0.78rem;
+  font-weight:700;
+}
+
+.phase-sub{
+  margin-left:auto;
+  font-size:0.63rem;
+  color:var(--muted);
+}
+
+.phase-body{
+  padding:14px;
+}
+
+.row-lbl{
+  font-size:0.61rem;
+  color:var(--muted);
+  text-transform:uppercase;
+  letter-spacing:1.5px;
+  margin-bottom:7px;
+}
+
+.row-wrap{
+  display:flex;
+  align-items:center;
+  gap:5px;
+  flex-wrap:wrap;
+  margin-bottom:12px;
+}
+
+.chip{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  width:50px;
+  height:42px;
+
+  border-radius:5px;
+  font-size:0.72rem;
+  font-weight:700;
+
+  border:1.5px solid transparent;
+  position:relative;
+}
+
+.chip.in-vp{
+  background:var(--green-bg);
+  border-color:var(--green);
+  color:var(--green);
+}
+
+.chip.out-vp{
+  background:var(--surface2);
+  border-color:var(--border-strong);
+  color:var(--muted);
+}
+
+.vp-divider{
+  width:2px;
+  height:42px;
+  background:var(--text);
+  opacity:0.2;
+}
+
+.il-wrap{
+  display:flex;
+  align-items:center;
+  gap:5px;
+  flex-wrap:wrap;
+  padding-bottom:20px;
+}
+
+.il-chip{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  width:50px;
+  height:42px;
+
+  border-radius:5px;
+  border:1.5px solid transparent;
+
+  position:relative;
+  cursor:pointer;
+  font-size:0.72rem;
+  font-weight:700;
+}
+
+.il-chip.top-vp{
+  background:var(--green-bg);
+  border-color:var(--green);
+  color:var(--green);
+}
+
+.il-chip.bot-vp{
+  background:var(--blue-bg);
+  border-color:var(--blue);
+  color:var(--blue);
+}
+
+.il-chip.top-out{
+  background:#f5f5f0;
+  border-color:var(--border-strong);
+  color:#666;
+}
+
+.il-chip.bot-out{
+  background:#edf0ff;
+  border-color:#c0ccf0;
+  color:#6070b8;
+}
+
+.il-chip.il-dropped{
+  opacity:0.25;
+  text-decoration:line-through;
+}
+
+.row-tag{
+  position:absolute;
+  bottom:-16px;
+  left:50%;
+  transform:translateX(-50%);
+
+  font-size:0.45rem;
+  font-weight:700;
+  color:var(--muted2);
+}
+
+.il-sep{
+  font-family:'Syne', sans-serif;
+  font-weight:800;
+  font-size:1rem;
+  color:var(--muted2);
+  line-height:42px;
+}
+
+.connector{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  font-size:0.68rem;
+  color:var(--muted2);
+}
+
+.connector::before,
+.connector::after{
+  content:'';
+  flex:1;
+  height:1px;
+  background:var(--border);
+}
+
+.apply-btn{
+  display:inline-flex;
+  align-items:center;
+  gap:5px;
+
+  padding:6px 13px;
+
+  background:var(--text);
+  color:#fff;
+
+  border:none;
+  border-radius:4px;
+
+  font-family:'Syne', sans-serif;
+  font-weight:700;
+  font-size:0.72rem;
+
+  cursor:pointer;
+  margin-top:10px;
+}
+
+.log-panel{
+  background:var(--surface);
+  border:1px solid var(--border-strong);
+  border-radius:6px;
+  max-height:190px;
+  overflow-y:auto;
+}
+
+.log-hd{
+  font-family:'Syne', sans-serif;
+  font-size:0.65rem;
+  font-weight:600;
+  letter-spacing:2px;
+  text-transform:uppercase;
+  color:var(--muted);
+
+  padding:9px 13px;
+  border-bottom:1px solid var(--border);
+}
+
+.log-entry{
+  font-size:0.67rem;
+  padding:5px 13px;
+  border-bottom:1px solid var(--border);
+  color:var(--muted);
+}
+
+.tag{
+  display:inline-block;
+  padding:1px 5px;
+  border-radius:3px;
+  font-size:0.55rem;
+  font-weight:700;
+  margin-right:5px;
+}
+
+.tag-shuffle{
+  background:var(--green-bg);
+  color:var(--green);
+}
+
+.tag-recover{
+  background:var(--blue-bg);
+  color:var(--blue);
+}
+
+.tag-info{
+  background:var(--surface2);
+  color:var(--muted);
+}
+
+.empty-msg{
+  color:var(--muted2);
+  font-size:0.7rem;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <h1>NPC · Viewport Visibility</h1>
+  <p>Shuffle → Interleave → Drop → Recover</p>
+</header>
+
+<div class="algo-summary">
+<b>Algorithm Flow</b><br><br>
+
+1. Shuffle rows independently.<br>
+2. Interleave into a single proximity stream.<br>
+3. Remove unavailable items.<br>
+4. Reconstruct rows preserving row affinity.<br>
+5. If either original row exhausts → switch into global fallback pairing.<br>
+6. Lone survivors compact upward first.<br>
+7. Empty slots are allowed only at the bottom-right.
+</div>
+
+<div class="layout">
+
+  <!-- LEFT -->
+  <div class="config-panel">
+
+    <div class="sec-title">Configuration</div>
+
+    <label>Viewport Columns</label>
+    <input type="number" id="viewportCols" value="4">
+
+    <label>Top Row Items</label>
+    <input type="text" id="topItems" value="A,B,C,D,E,F,G">
+
+    <label>Bottom Row Items</label>
+    <input type="text" id="bottomItems" value="P,Q,R,S,T,U,V">
+
+    <label>Fixed Top Slot</label>
+    <input type="text" id="fixedSlot" placeholder="optional">
+
+    <button class="btn btn-primary" onclick="initAndRender()">
+      ↺ Reset & Shuffle
+    </button>
+
+    <button class="btn btn-outline" onclick="nextRender()">
+      → Next Render
+    </button>
+
+  </div>
+
+  <!-- RIGHT -->
+  <div class="right-col">
+
+    <div class="stats-row">
+
+      <div class="stat-box">
+        <div class="stat-val" id="statRender">—</div>
+        <div class="stat-lbl">Render #</div>
+      </div>
+
+      <div class="stat-box">
+        <div class="stat-val" id="statVisible">—</div>
+        <div class="stat-lbl">Visible</div>
+      </div>
+
+      <div class="stat-box">
+        <div class="stat-val" id="statDropped">0</div>
+        <div class="stat-lbl">Dropped</div>
+      </div>
+
+    </div>
+
+    <!-- PHASE 1 -->
+    <div class="phase-card">
+
+      <div class="phase-head">
+        <div class="phase-num">1</div>
+        <div class="phase-title">Shuffled State</div>
+        <div class="phase-sub">Before validation</div>
+      </div>
+
+      <div class="phase-body">
+
+        <div class="row-lbl">Top Row</div>
+        <div class="row-wrap" id="shuffledTop"></div>
+
+        <div class="row-lbl">Bottom Row</div>
+        <div class="row-wrap" id="shuffledBottom"></div>
+
+      </div>
+    </div>
+
+    <div class="connector">
+      ↓ interleave into proximity ordering
+    </div>
+
+    <!-- PHASE 2 -->
+    <div class="phase-card">
+
+      <div class="phase-head">
+        <div class="phase-num">2</div>
+        <div class="phase-title">Interleaved Ordering</div>
+        <div class="phase-sub">Click items to drop</div>
+      </div>
+
+      <div class="phase-body">
+
+        <div class="il-wrap" id="interleavedDisplay"></div>
+
+        <button class="apply-btn" onclick="applyDropsAndRecover()">
+          Apply drops → Recover
+        </button>
+
+      </div>
+    </div>
+
+    <div class="connector">
+      ↓ reconstruct rows
+    </div>
+
+    <!-- PHASE 3 -->
+    <div class="phase-card">
+
+      <div class="phase-head">
+        <div class="phase-num">3</div>
+        <div class="phase-title">Recovered Carousel State</div>
+        <div class="phase-sub">Final render output</div>
+      </div>
+
+      <div class="phase-body" id="phase3Body">
+        <div class="empty-msg">
+          Apply drops to run reconstruction.
+        </div>
+      </div>
+
+    </div>
+
+    <!-- LOG -->
+    <div class="log-panel">
+
+      <div class="log-hd">
+        Event Log
+      </div>
+
+      <div id="logBody"></div>
+
+    </div>
+
+  </div>
+</div>
+
+<script>
+
+/* =========================================================
+   STATE
+========================================================= */
+
+const S = {
+  topRow:[],
+  bottomRow:[],
+  viewportCols:4,
+  fixedSlot:'',
+  renderCount:0
+};
+
+let shuffledTop = [];
+let shuffledBottom = [];
+let interleavedList = [];
+
+let droppedSet = new Set();
+
+let recoveredTop = [];
+let recoveredBottom = [];
+
+let recoveryApplied = false;
+
+/* =========================================================
+   HELPERS
+========================================================= */
+
+const parseItems = str =>
+  str.split(',')
+    .map(s => s.trim())
+    .filter(Boolean);
+
+function log(tag,msg){
+
+  const el = document.getElementById('logBody');
+
+  const d = document.createElement('div');
+
+  d.className = 'log-entry';
+
+  d.innerHTML = `
+    <span class="tag tag-${tag}">
+      ${tag}
+    </span>
+    ${msg}
+  `;
+
+  el.prepend(d);
+}
+
+function readConfig(){
+
+  S.viewportCols =
+    parseInt(document.getElementById('viewportCols').value) || 4;
+
+  S.fixedSlot =
+    document.getElementById('fixedSlot').value.trim();
+}
+
+/* =========================================================
+   SHUFFLE
+========================================================= */
+
+function shuffle(arr){
+
+  const a = [...arr];
+
+  for(let i=a.length-1;i>0;i--){
+
+    const j = Math.floor(Math.random()*(i+1));
+
+    [a[i],a[j]] = [a[j],a[i]];
+  }
+
+  return a;
+}
+
+function shuffleRow(items,fixed){
+
+  if(fixed && items.includes(fixed)){
+
+    const rest = items.filter(x => x !== fixed);
+
+    return [fixed, ...shuffle(rest)];
+  }
+
+  return shuffle(items);
+}
+
+/* =========================================================
+   INTERLEAVE
+========================================================= */
+
+function buildInterleaved(top,bot){
+
+  const res = [];
+
+  const n = Math.max(top.length, bot.length);
+
+  for(let i=0;i<n;i++){
+
+    if(i < top.length){
+      res.push({
+        item:top[i],
+        row:'top'
+      });
+    }
+
+    if(i < bot.length){
+      res.push({
+        item:bot[i],
+        row:'bottom'
+      });
+    }
+  }
+
+  return res;
+}
+
+/* =========================================================
+   STRICT BOTTOM-RIGHT COMPACTION
+========================================================= */
+
+function compactBottomRight(top,bot){
+
+  const maxLen = Math.max(top.length, bot.length);
+
+  for(let i=0;i<maxLen;i++){
+
+    const topEmpty = !top[i];
+    const botFilled = !!bot[i];
+
+    /* =====================================================
+       ONLY EMPTY BOTTOM-RIGHT ALLOWED
+
+       if:
+       top missing
+       bottom exists
+
+       flip upward
+    ===================================================== */
+
+    if(topEmpty && botFilled){
+
+      top[i] = bot[i];
+      bot[i] = undefined;
+    }
+  }
+
+  return {
+    top: top.filter(Boolean),
+    bot: bot.filter(Boolean)
+  };
+}
+
+/* =========================================================
+   RECONSTRUCTION
+========================================================= */
+
+function reconstructRows(filtered){
+
+  const top = [];
+  const bot = [];
+
+  const hasRow = (row, from) => {
+
+    for(let j=from;j<filtered.length;j++){
+
+      if(filtered[j].row === row){
+        return true;
+      }
+    }
+
+    return false;
+  };
+
+  let i = 0;
+
+  while(i < filtered.length){
+
+    const topLeft = hasRow('top', i);
+    const botLeft = hasRow('bottom', i);
+
+    if(!topLeft && !botLeft){
+      break;
+    }
+
+    /* =====================================================
+       GLOBAL FALLBACK
+    ===================================================== */
+
+    if(!topLeft || !botLeft){
+
+      let assignTop = true;
+
+      while(i < filtered.length){
+
+        if(assignTop){
+          top.push(filtered[i].item);
+        } else {
+          bot.push(filtered[i].item);
+        }
+
+        assignTop = !assignTop;
+        i++;
+      }
+
+      break;
+    }
+
+    /* =====================================================
+       NORMAL ROW-AFFINITY MODE
+    ===================================================== */
+
+    let topCandidate = null;
+    let botCandidate = null;
+
+    while(i < filtered.length){
+
+      if(filtered[i].row === 'top'){
+        topCandidate = filtered[i].item;
+        i++;
+        break;
+      }
+
+      bot.push(filtered[i].item);
+      i++;
+    }
+
+    while(i < filtered.length){
+
+      if(filtered[i].row === 'bottom'){
+        botCandidate = filtered[i].item;
+        i++;
+        break;
+      }
+
+      top.push(filtered[i].item);
+      i++;
+    }
+
+    if(topCandidate && botCandidate){
+
+      top.push(topCandidate);
+      bot.push(botCandidate);
+
+    } else if(topCandidate){
+
+      top.push(topCandidate);
+
+    } else if(botCandidate){
+
+      top.push(botCandidate);
+    }
+  }
+
+  /* =====================================================
+     FINAL STRICT COMPACTION PASS
+  ===================================================== */
+
+  return compactBottomRight(top, bot);
+}
+
+/* =========================================================
+   UI
+========================================================= */
+
+function makeChip(item,cls){
+
+  const chip = document.createElement('div');
+
+  chip.className = cls;
+
+  chip.textContent = item;
+
+  return chip;
+}
+
+function renderCarouselRow(arr,container){
+
+  container.innerHTML = '';
+
+  arr.forEach((item,idx)=>{
+
+    const inVP = idx < S.viewportCols;
+
+    const cls =
+      `chip ${inVP ? 'in-vp' : 'out-vp'}`;
+
+    container.appendChild(makeChip(item,cls));
+
+    if(
+      idx === S.viewportCols-1 &&
+      idx < arr.length-1
+    ){
+      const d = document.createElement('div');
+      d.className = 'vp-divider';
+      container.appendChild(d);
+    }
+  });
+}
+
+function renderPhase1(){
+
+  renderCarouselRow(
+    shuffledTop,
+    document.getElementById('shuffledTop')
+  );
+
+  renderCarouselRow(
+    shuffledBottom,
+    document.getElementById('shuffledBottom')
+  );
+}
+
+function renderInterleavedPhase(){
+
+  const wrap =
+    document.getElementById('interleavedDisplay');
+
+  wrap.innerHTML = '';
+
+  const vpLimit = S.viewportCols * 2;
+
+  interleavedList.forEach((entry,idx)=>{
+
+    if(idx === vpLimit){
+
+      const sep = document.createElement('span');
+
+      sep.className = 'il-sep';
+
+      sep.textContent = '|';
+
+      wrap.appendChild(sep);
+    }
+
+    const inVP = idx < vpLimit;
+
+    const isTop = entry.row === 'top';
+
+    const dropped = droppedSet.has(entry.item);
+
+    let cls = inVP
+      ? (isTop ? 'top-vp' : 'bot-vp')
+      : (isTop ? 'top-out' : 'bot-out');
+
+    const chip = document.createElement('div');
+
+    chip.className =
+      `il-chip ${cls}${dropped ? ' il-dropped' : ''}`;
+
+    chip.textContent = entry.item;
+
+    const tag = document.createElement('span');
+
+    tag.className = 'row-tag';
+
+    tag.textContent = isTop ? 'TOP' : 'BTM';
+
+    chip.appendChild(tag);
+
+    chip.onclick = ()=>{
+
+      if(droppedSet.has(entry.item)){
+        droppedSet.delete(entry.item);
+      } else {
+        droppedSet.add(entry.item);
+      }
+
+      renderInterleavedPhase();
+
+      document.getElementById('statDropped')
+        .textContent = droppedSet.size;
+
+      recoveryApplied = false;
+
+      document.getElementById('phase3Body').innerHTML =
+        `<div class="empty-msg">
+          Drops changed — apply again.
+        </div>`;
+    };
+
+    wrap.appendChild(chip);
+  });
+
+  document.getElementById('statDropped')
+    .textContent = droppedSet.size;
+}
+
+function renderPhase3(){
+
+  const body =
+    document.getElementById('phase3Body');
+
+  body.innerHTML = '';
+
+  if(!recoveryApplied){
+
+    body.innerHTML =
+      `<div class="empty-msg">
+        Apply drops to run reconstruction.
+      </div>`;
+
+    return;
+  }
+
+  function addRow(arr,label){
+
+    const lbl = document.createElement('div');
+
+    lbl.className = 'row-lbl';
+
+    lbl.textContent = label;
+
+    body.appendChild(lbl);
+
+    const wrap = document.createElement('div');
+
+    wrap.className = 'row-wrap';
+
+    renderCarouselRow(arr,wrap);
+
+    body.appendChild(wrap);
+  }
+
+  addRow(recoveredTop,'Top Row');
+  addRow(recoveredBottom,'Bottom Row');
+
+  const visible =
+    recoveredTop.slice(0,S.viewportCols).length +
+    recoveredBottom.slice(0,S.viewportCols).length;
+
+  document.getElementById('statVisible')
+    .textContent = visible;
+}
+
+/* =========================================================
+   ACTIONS
+========================================================= */
+
+function applyDropsAndRecover(){
+
+  const filtered =
+    interleavedList.filter(
+      e => !droppedSet.has(e.item)
+    );
+
+  const { top, bot } =
+    reconstructRows(filtered);
+
+  recoveredTop = top;
+  recoveredBottom = bot;
+
+  recoveryApplied = true;
+
+  log(
+    'recover',
+    `Top: [${top.join(', ')}]
+     | Bottom: [${bot.join(', ')}]`
+  );
+
+  renderPhase3();
+}
+
+function performRender(){
+
+  readConfig();
+
+  S.renderCount++;
+
+  droppedSet = new Set();
+
+  recoveryApplied = false;
+
+  shuffledTop =
+    shuffleRow(
+      [...S.topRow],
+      S.fixedSlot
+    );
+
+  shuffledBottom =
+    shuffleRow(
+      [...S.bottomRow],
+      null
+    );
+
+  interleavedList =
+    buildInterleaved(
+      shuffledTop,
+      shuffledBottom
+    );
+
+  log(
+    'shuffle',
+    `#${S.renderCount}
+    — Top: [${shuffledTop.join(', ')}]
+    | Bottom: [${shuffledBottom.join(', ')}]`
+  );
+
+  document.getElementById('statRender')
+    .textContent = S.renderCount;
+
+  document.getElementById('statVisible')
+    .textContent = '—';
+
+  document.getElementById('statDropped')
+    .textContent = '0';
+
+  renderPhase1();
+
+  renderInterleavedPhase();
+
+  document.getElementById('phase3Body').innerHTML =
+    `<div class="empty-msg">
+      Apply drops to run reconstruction.
+    </div>`;
+}
+
+function initAndRender(){
+
+  readConfig();
+
+  S.topRow =
+    parseItems(
+      document.getElementById('topItems').value
+    );
+
+  S.bottomRow =
+    parseItems(
+      document.getElementById('bottomItems').value
+    );
+
+  S.renderCount = 0;
+
+  document.getElementById('logBody').innerHTML = '';
+
+  log(
+    'info',
+    `Init — Top: [${S.topRow.join(', ')}]
+    | Bottom: [${S.bottomRow.join(', ')}]`
+  );
+
+  performRender();
+}
+
+function nextRender(){
+
+  if(!S.topRow.length){
+    initAndRender();
+    return;
+  }
+
+  performRender();
+}
+
+initAndRender();
+
+</script>
+</body>
+</html>
