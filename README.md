@@ -1,4 +1,4 @@
-#NPC Visibility Recovery Simulator
+# NPC Visibility Recovery Simulator
 
 The core idea behind this logic is to preserve fair viewport visibility distribution even after items become unavailable post-shuffle.
 
